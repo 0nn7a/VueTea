@@ -1,31 +1,34 @@
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://vuejs.org/api/sfc-script-setup.html#script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import { NConfigProvider } from 'naive-ui';
+
+/**
+ * @type import('naive-ui').GlobalThemeOverrides
+ */
+const themeOverrides = {
+  common: {
+    primaryColor: '#8e3122',
+  },
+  Tabs: {
+    tabBorderColor: 'transparent',
+    tabTextColorLine: '#958264',
+    tabFontWeight: '700',
+    tabFontWeightActive: '700',
+  },
+  Divider: {
+    color: 'rgba(149,130,100,0.5)',
+  },
+};
 </script>
 
 <template>
-  <div>
-    <a href="https://vitejs.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-    </a>
-  </div>
-  <HelloWorld msg="Vite + Vue" />
+  <n-config-provider :theme-overrides="themeOverrides">
+    <router-view></router-view>
+    <Tabbar></Tabbar>
+  </n-config-provider>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
+<style>
+body {
+  background-color: #c9bc99;
 }
 </style>
