@@ -59,10 +59,11 @@ const switchTab = path => {
   font-weight: 700;
   position: fixed;
   left: 0;
-  bottom: 0;
+  bottom: -0.3px;
   width: 100%;
   height: 1.7rem;
   z-index: 999;
+  border-top: 1px solid #958264;
   ul {
     display: flex;
     justify-content: space-around;

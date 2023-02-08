@@ -1,9 +1,15 @@
-<script setup></script>
+<script setup>
+const router = useRouter();
+</script>
 
 <template>
   <header>
-    <img src="@/assets/images/logo.png" alt="#" />
-    <div class="search">
+    <img
+      src="@/assets/images/logo.png"
+      alt="#"
+      @click="router.push({ name: 'Home' })"
+    />
+    <div class="search" @click="router.push({ name: 'Skey' })">
       <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
       <p>搜尋⋯⋯</p>
     </div>

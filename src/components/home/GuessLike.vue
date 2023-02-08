@@ -1,25 +1,11 @@
 <script setup>
+const router = useRouter();
+const props = defineProps({
+  likes: Array,
+});
 function imgUrl(n) {
   return new URL(`/src/assets/images/product/${n}.png`, import.meta.url).href;
 }
-const likeData = reactive({
-  product: [
-    {
-      id: 1,
-      name: '濃郁曲奇系列',
-      price: 650,
-      url: imgUrl('cookiesTitle'),
-    },
-    { id: 2, name: '魔呼禮品提袋', price: 49, url: imgUrl('bagTitle') },
-    {
-      id: 3,
-      name: '魔呼精選咖啡',
-      price: 750,
-      url: imgUrl('coffeeTitle'),
-    },
-    { id: 4, name: '巴斯克蛋糕', price: 690, url: imgUrl('basqueTitle') },
-  ],
-});
 </script>
 
 <template>
@@ -27,16 +13,19 @@ const likeData = reactive({
     <template #default>猜你喜歡</template>
     <template #main>
       <n-grid x-gap="12" y-gap="12" :cols="2">
-        <n-gi v-for="p in likeData.product" :key="p.id">
+        <n-gi
+          v-for="p in props.likes"
+          :key="p.id"
+          @click="router.push({ name: 'Detail', query: { pname: p.name } })"
+        >
           <div class="box">
-            <img :src="p.url" />
+            <img :src="imgUrl(p.url)" />
           </div>
           <div class="priceTag">
             <div class="left">
               <h3>{{ p.name }}</h3>
               <span>{{ '$ ' + (p.price + 100) }}</span>
             </div>
-
             <p>{{ '$ ' + p.price }}</p>
           </div>
         </n-gi>
@@ -74,13 +63,14 @@ const likeData = reactive({
       span {
         font-size: 0.3rem;
         text-decoration: line-through;
+        color: #958264;
       }
     }
     p {
       display: inline-block;
       color: #8e3122;
       font-size: 0.55rem;
-      font-weight: 700;
+      font-weight: 600;
     }
   }
 }

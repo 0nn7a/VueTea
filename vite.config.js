@@ -28,9 +28,8 @@ export default defineConfig({
         /\.vue\?vue/, // .vue
         /\.md$/, // .md
       ],
-      dts: 'false',
+      dts: false,
     }),
-
     Components({
       extensions: ['vue'],
       include: [/\.vue$/, /\.vue\?vue/, /\.md$/],
@@ -43,6 +42,15 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  server: {
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true,
+        rewrite: path => path.replace(/^\/api/, ''),
+      },
     },
   },
 });

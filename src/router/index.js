@@ -6,6 +6,11 @@ const routes = [
     redirect: '/home',
   },
   {
+    name: 'Login',
+    path: '/login',
+    component: () => import('@/views/Mlogin.vue'),
+  },
+  {
     name: 'Home',
     path: '/home',
     component: () => import('@/views/Home.vue'),
@@ -25,6 +30,29 @@ const routes = [
     path: '/mine',
     component: () => import('@/views/Mine.vue'),
   },
+  {
+    name: 'Search',
+    path: '/search',
+    component: () => import('@/views/Search.vue'),
+    children: [
+      {
+        name: 'Skey',
+        path: '',
+        component: () => import('@/views/Skey.vue'),
+      },
+      {
+        name: 'Slist',
+        path: ':product',
+        component: () => import('@/views/Slist.vue'),
+      },
+    ],
+  },
+  {
+    name: 'Detail',
+    path: '/detail',
+    component: () => import('@/views/Detail.vue'),
+  },
+  { path: '/:notFound(.*)*', redirect: '/home' },
 ];
 
 const router = createRouter({

@@ -1,4 +1,7 @@
 <script setup>
+const props = defineProps({
+  recs: Array,
+});
 const cardStyle = ref({
   display: 'flex',
   alignItems: 'center',
@@ -8,34 +11,6 @@ const cardStyle = ref({
 function imgUrl(n) {
   return new URL(`/src/assets/images/product/${n}.png`, import.meta.url).href;
 }
-const RecData = reactive({
-  product: [
-    {
-      id: 1,
-      price: '$ 360',
-      name: '日式焦糖烤布丁',
-      desc: '大人味的迷人苦甜焦糖香',
-      tags: '蛋香十足 口感扎實綿密',
-      url: imgUrl('pudding4'),
-    },
-    {
-      id: 2,
-      price: '$ 750',
-      name: '小山園抹茶酥頂磅蛋糕',
-      desc: '日本丸久小山園抹茶粉',
-      tags: '甘苦不澀 抹茶控',
-      url: imgUrl('pancakeMoca'),
-    },
-    {
-      id: 3,
-      price: '$ 290',
-      name: '法芙娜可可羅馬盾牌',
-      desc: '餅內圈為杏仁奶油焦糖',
-      tags: '香甜脆口 帶著可可香',
-      url: imgUrl('romaCocoa'),
-    },
-  ],
-});
 </script>
 
 <template>
@@ -44,14 +19,14 @@ const RecData = reactive({
 
     <template #main>
       <n-card
-        v-for="p in RecData.product"
+        v-for="p in props.recs"
         :key="p.id"
         :bordered="false"
         :content-style="cardStyle"
       >
         <div class="noti">
           <span class="badge">{{ p.price }}</span>
-          <img :src="p.url" />
+          <img :src="imgUrl(p.url)" />
         </div>
         <div class="para">
           <h3>{{ p.name }}</h3>
