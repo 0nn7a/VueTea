@@ -51,7 +51,7 @@ const imgData = reactive({
       v-else
       :bordered="false"
       content-style="padding: 0; width: 100vw; text-align: start;"
-      style="margin-bottom: 16px; background-color: transparent"
+      style="margin-bottom: 0.38rem; background-color: transparent"
     >
       <n-tabs type="line" animated default-value="rec">
         <n-tab-pane

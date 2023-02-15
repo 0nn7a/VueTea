@@ -6,11 +6,6 @@ const routes = [
     redirect: '/home',
   },
   {
-    name: 'Login',
-    path: '/login',
-    component: () => import('@/views/Mlogin.vue'),
-  },
-  {
     name: 'Home',
     path: '/home',
     component: () => import('@/views/Home.vue'),
@@ -29,6 +24,16 @@ const routes = [
     name: 'Mine',
     path: '/mine',
     component: () => import('@/views/Mine.vue'),
+  },
+  {
+    name: 'Login',
+    path: '/login',
+    component: () => import('@/views/Mlogin.vue'),
+  },
+  {
+    name: 'Forgot',
+    path: '/forgot',
+    component: () => import('@/views/Forgot.vue'),
   },
   {
     name: 'Search',

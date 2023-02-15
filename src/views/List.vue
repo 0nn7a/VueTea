@@ -1,5 +1,6 @@
 <script setup>
 import axios from 'axios';
+const router = useRouter();
 function imgUrl(n) {
   return new URL(`/src/assets/images/${n}.png`, import.meta.url).href;
 }
@@ -9,7 +10,6 @@ function imgPdUrl(n) {
 
 const listData = reactive({
   cover: 'carousel2',
-  rec: [],
   menu: [],
 });
 const navName = computed({
@@ -26,7 +26,6 @@ const getListData = async () => {
       return Promise.reject(err);
     }
   );
-  listData.rec = res.rec;
   listData.menu = res.menu;
 
   nextTick(() => {
@@ -91,7 +90,12 @@ onMounted(() => {
         <div class="outside">
           <n-grid v-if="listData.menu[n].length" cols="3">
             <n-gi v-for="p in listData.menu[n]" :key="p">
-              <div class="box">
+              <div
+                class="box"
+                @click="
+                  router.push({ name: 'Detail', query: { pname: p.detail } })
+                "
+              >
                 <img :src="imgPdUrl(p.name)" />
               </div>
               <p>{{ p.des }}</p>

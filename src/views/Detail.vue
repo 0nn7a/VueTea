@@ -7,24 +7,28 @@ const { pname } = route.query;
 const queryDetail = async () => {
   let res = await axios.post('/api/detail', null, { params: { pname } }).then(
     res => {
-      return res.data.detailData;
+      return res.data;
     },
     err => {
       return Promise.reject(err);
     }
   );
-  imgData.product = res.product;
-  imgData.flavor = res.flavor || [];
-  imgData.detail = res.detail;
-  imgData.random = imgUrl(res.random);
-  imgData.para = res.para;
-  imgData.price = res.price;
-  imgData.product.forEach(item => {
-    item.url = imgPdUrl(item.url);
-  });
-  imgData.detail.forEach(item => {
-    item.url = imgPdUrl(item.url);
-  });
+  if (res.code === 200) {
+    imgData.product = res.detailData.product;
+    imgData.flavor = res.detailData.flavor || [];
+    imgData.detail = res.detailData.detail;
+    imgData.random = imgUrl(res.detailData.random);
+    imgData.para = res.detailData.para;
+    imgData.price = res.detailData.price;
+    imgData.product.forEach(item => {
+      item.url = imgPdUrl(item.url);
+    });
+    imgData.detail.forEach(item => {
+      item.url = imgPdUrl(item.url);
+    });
+  } else {
+    imgData.meg = res.meg;
+  }
 };
 function imgPdUrl(n) {
   return new URL(`/src/assets/images/product/${n}.png`, import.meta.url).href;
@@ -40,6 +44,7 @@ const imgData = reactive({
   random: '',
   para: '',
   price: '',
+  meg: '',
 });
 
 // nav
@@ -70,7 +75,12 @@ onMounted(() => {
     :navShow="navShow"
     :background="false"
   ></NavReturn>
-  <main ref="scrollBox">
+
+  <div v-if="imgData.meg" class="notFound">
+    <p>{{ imgData.meg }}</p>
+  </div>
+
+  <main v-else ref="scrollBox">
     <Swiper :img-data="imgData.product"></Swiper>
     <div class="title">
       <h1>
@@ -145,14 +155,14 @@ main {
       margin: 10px 0;
     }
     .flavor {
-      margin-top: 0.2rem;
       font-size: 0.38rem;
       display: flex;
+      flex-wrap: wrap;
       span {
         padding: 0 0.1rem;
         border: 1px solid #958264;
         background-color: #c9bc99;
-        margin-right: 0.2rem;
+        margin: 0.2rem 0.2rem 0 0;
       }
     }
     .price {
@@ -264,6 +274,17 @@ footer {
     &:hover {
       background-color: #865937;
     }
+  }
+}
+
+.notFound {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 1.3rem);
+  p {
+    font-size: 0.45rem;
+    color: #958264;
   }
 }
 </style>

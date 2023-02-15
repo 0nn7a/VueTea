@@ -78,24 +78,17 @@ const searchData = [
 // List Data
 const listData = {
   cover: 'carousel2',
-  rec: [
-    { name: 'coffeeTitle', des: '咖啡' },
-    { name: 'caseY', des: '包裝盒' },
-    { name: 'bagTitle', des: '紙袋' },
-    { name: 'cookiesTitle', des: '奶油曲奇' },
-    { name: 'basqueTitle', des: '巴斯克' },
-  ],
   menu: {
     推薦: [
-      { name: 'coffeeTitle', des: '咖啡' },
-      { name: 'caseY', des: '包裝盒' },
-      { name: 'bagTitle', des: '紙袋' },
+      { name: 'coffeeTitle', des: '咖啡', detail: '魔呼精選咖啡' },
+      { name: 'caseY', des: '包裝盒', detail: '魔呼包裝盒' },
+      { name: 'bagTitle', des: '提袋', detail: '魔呼禮品提袋' },
       { name: 'cookiesTitle', des: '奶油曲奇' },
-      { name: 'basqueTitle', des: '巴斯克' },
+      { name: 'basqueTitle', des: '巴斯克', detail: '巴斯克蛋糕' },
     ],
     烤布丁: [
-      { name: 'pudding4', des: '四入/盒' },
-      { name: 'pudding9', des: '九入/盒' },
+      { name: 'pudding4', des: '四入/盒', detail: '日式焦糖烤布丁' },
+      { name: 'pudding9', des: '九入/盒', detail: '日式焦糖烤布丁' },
     ],
     乳霜蛋糕: [],
     羅馬盾牌: [
@@ -103,19 +96,19 @@ const listData = {
       { name: 'romaCocoa', des: '法芙娜可可' },
     ],
     磅蛋糕: [
-      { name: 'pancakeApple', des: '蘋果肉桂' },
-      { name: 'pancakeBacon', des: '培根芝士' },
-      { name: 'pancakeCocoa', des: '可可乳酪' },
-      { name: 'pancakeCream', des: '焦糖杏仁' },
-      { name: 'pancakeLemon', des: '青檸糖霜' },
-      { name: 'pancakeMoca', des: '抹茶酥' },
-      { name: 'pancakeTea', des: '茶麻糬' },
+      { name: 'pancakeApple', des: '蘋果肉桂', detail: '彩虹風味磅蛋糕(綜合)' },
+      { name: 'pancakeBacon', des: '培根芝士', detail: '彩虹風味磅蛋糕(綜合)' },
+      { name: 'pancakeCocoa', des: '可可乳酪', detail: '彩虹風味磅蛋糕(綜合)' },
+      { name: 'pancakeCream', des: '焦糖杏仁', detail: '彩虹風味磅蛋糕(綜合)' },
+      { name: 'pancakeLemon', des: '青檸糖霜', detail: '彩虹風味磅蛋糕(綜合)' },
+      { name: 'pancakeMoca', des: '抹茶酥', detail: '彩虹風味磅蛋糕(綜合)' },
+      { name: 'pancakeTea', des: '茶麻糬', detail: '彩虹風味磅蛋糕(綜合)' },
     ],
     巴斯克: [
-      { name: 'basqueOriginal', des: '經典' },
-      { name: 'basqueCocoa', des: '法芙娜可可' },
-      { name: 'basqueLame', des: '蘭姆葡萄' },
-      { name: 'basqueMoca', des: '小山園抹茶' },
+      { name: 'basqueOriginal', des: '經典', detail: '巴斯克蛋糕' },
+      { name: 'basqueCocoa', des: '法芙娜可可', detail: '巴斯克蛋糕' },
+      { name: 'basqueLame', des: '蘭姆葡萄', detail: '巴斯克蛋糕' },
+      { name: 'basqueMoca', des: '小山園抹茶', detail: '巴斯克蛋糕' },
     ],
     布列塔尼: [],
     夾心餅: [
@@ -178,12 +171,57 @@ const detailData = {
     ],
     price: 690,
   },
+  魔呼包裝盒: {
+    product: [
+      { id: 1, url: 'caseB' },
+      { id: 2, url: 'caseR' },
+      { id: 3, url: 'caseY' },
+    ],
+    flavor: ['藍色(長)', '紅色(方)', '黃(長)'],
+    detail: [{ url: 'caseHover' }, { url: 'caseHover2' }],
+    para: ['長形款：15.6 x 8.5 x 6.8 cm', '方形款：19.5 x 17.6 x 7.2 cm'],
+    price: 119,
+  },
+  '彩虹風味磅蛋糕(綜合)': {
+    product: [
+      { id: 1, url: 'pancakeTitle' },
+      { id: 2, url: 'pancakeApple' },
+      { id: 3, url: 'pancakeBacon' },
+      { id: 4, url: 'pancakeCocoa' },
+      { id: 5, url: 'pancakeCream' },
+      { id: 6, url: 'pancakeLemon' },
+      { id: 7, url: 'pancakeMoca' },
+      { id: 8, url: 'pancakeTea' },
+      { id: 9, url: 'caseB' },
+    ],
+    flavor: [
+      '蘋果肉桂奶酥',
+      '青檸糖霜',
+      '小山園抹茶酥頂',
+      '法芙娜可可乳酪',
+      '焦糖烤杏仁',
+      '伯爵茶麻糬',
+      '香蔥培根芝士',
+    ],
+    detail: [
+      { url: 'pancakeHover' },
+      { url: 'pancakeHover2' },
+      { url: 'pancakeHover3' },
+      { url: 'pancakeHover4' },
+    ],
+    para: [
+      '經典不敗超人氣巴斯克 獨家半熟軟芯',
+      '焦香頂層是最大特色 外層綿密細緻內芯絲滑濃郁',
+    ],
+    price: 690,
+  },
   random: [{ url: 'painting1' }, { url: 'painting2' }, { url: 'painting3' }],
 };
 function randomImg(obj) {
   let index = Math.floor(Math.random() * obj.length);
   return obj[index].url;
 }
+
 // req & res
 router.get('/home', function (req, res, next) {
   res.send({
@@ -214,23 +252,31 @@ router.get('/list', function (req, res) {
 
 router.post('/detail', function (req, res) {
   let { pname } = req.query;
-  let { product, flavor, detail, para, price } = detailData[pname];
   let random = randomImg(detailData.random);
-  res.send({
-    code: 200,
-    detailData: { product, flavor, detail, random, para, price },
-  });
+  if (detailData[pname]) {
+    let { product, flavor, detail, para, price } = detailData[pname];
+    res.send({
+      code: 200,
+      detailData: { product, flavor, detail, random, para, price },
+    });
+  } else {
+    res.send({
+      code: 404,
+      meg: '暫無資料...',
+    });
+  }
 });
 
-// login
+// User
 const userData = [
   {
-    id: 1,
+    id: 0,
     email: 'admin@mail.com',
     password: '000000',
     name: 'Admin',
     phone: '0900111111',
     address: 'newTaipei',
+    avatar: 'avatar0',
   },
 ];
 
@@ -243,12 +289,13 @@ router.post('/login', function (req, res) {
     if (exist.password === password) {
       res.send({
         code: 200,
-        meg: '驗證成功',
+        meg: '登入成功',
+        userData: exist,
       });
     } else {
       res.send({
         code: 401,
-        meg: '驗證失敗 密碼錯誤',
+        meg: '帳號或密碼錯誤',
       });
     }
   } else {
@@ -257,6 +304,61 @@ router.post('/login', function (req, res) {
       meg: '使用者不存在',
     });
   }
+});
+router.post('/signup', function (req, res) {
+  let { email, password, name, phone, address } = req.body.data.signup;
+
+  let exist = userData.some(i => {
+    return i.email === email;
+  });
+  if (!exist) {
+    let index = userData.length;
+    userData.push({
+      id: index,
+      email,
+      password,
+      name,
+      phone,
+      address,
+      avatar: 'avatar1',
+    });
+    res.send({
+      code: 200,
+      meg: '註冊成功，跳轉登入',
+    });
+  } else {
+    res.send({
+      code: 402,
+      meg: '此郵箱已註冊',
+    });
+  }
+  console.log(userData);
+});
+router.post('/forgot', function (req, res) {
+  let { email, password } = req.body.data.forgot;
+  let exist = userData.find(i => {
+    return i.email === email;
+  });
+  if (!password) {
+    if (exist) {
+      res.send({
+        code: 200,
+        meg: '已找到使用者，請輸入新密碼',
+      });
+    } else {
+      res.send({
+        code: 402,
+        meg: '此郵箱未註冊',
+      });
+    }
+  } else {
+    exist['password'] = password;
+    res.send({
+      code: 200,
+      meg: '新密碼已重設，跳轉登入',
+    });
+  }
+  console.log(userData);
 });
 
 module.exports = router;

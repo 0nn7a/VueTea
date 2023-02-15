@@ -73,7 +73,6 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: transparent;
     background-color: #8e3122;
     .icon {
       background-color: transparent;

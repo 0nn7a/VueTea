@@ -21,6 +21,8 @@
   font-size: 0.35rem;
   .title {
     display: flex;
+    width: 100%;
+    justify-content: center;
     align-items: center;
     margin: 0.35rem 0;
     text-align: center;

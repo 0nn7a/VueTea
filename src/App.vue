@@ -1,6 +1,5 @@
 <script setup>
 import { NConfigProvider } from 'naive-ui';
-
 /**
  * @type import('naive-ui').GlobalThemeOverrides
  */
@@ -30,17 +29,35 @@ const themeOverrides = {
     iconColorError: '#8e3122',
     iconSize: '0.6rem',
   },
+  Message: {
+    margin: '0 0 2rem 0',
+    colorSuccess: '#7a5e49',
+    colorError: '#8e3122',
+    textColorSuccess: '#c9bc99',
+    textColorError: '#c9bc99',
+    iconColorSuccess: '#c9bc99',
+    iconColorError: '#c9bc99',
+  },
 };
 
 const route = useRoute();
+import { useCommonStore } from '@/stores/commonStore';
+const store = useCommonStore();
+
+const tabbarShow = ['Detail', 'Cart'];
+
+onMounted(() => {
+  store.initUser();
+});
 </script>
 
 <template>
   <n-config-provider :theme-overrides="themeOverrides">
-    <n-message-provider>
-      <router-view></router-view>
-      <Tabbar v-if="route.name !== 'Detail'"></Tabbar>
-      <!--    <Tabbar></Tabbar>-->
+    <n-message-provider placement="bottom">
+      <n-dialog-provider>
+        <router-view></router-view>
+        <Tabbar v-if="!tabbarShow.includes(route.name)"></Tabbar>
+      </n-dialog-provider>
     </n-message-provider>
   </n-config-provider>
 </template>

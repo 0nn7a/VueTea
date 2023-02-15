@@ -68,7 +68,7 @@ onMounted(() => {
     <n-card
       :bordered="false"
       content-style="width: 100vw; padding-bottom: 0;"
-      style="margin-bottom: 16px; background-color: transparent"
+      style="margin-bottom: 0.38rem; background-color: transparent"
     >
       <div v-if="record.history.length > 0" class="record">
         <div

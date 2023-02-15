@@ -1,5 +1,13 @@
 <script setup>
 import axios from 'axios';
+import { useCommonStore } from '@/stores/commonStore';
+const store = useCommonStore();
+
+import { useMessage } from 'naive-ui';
+const message = useMessage();
+const spinShow = ref(false);
+
+const router = useRouter();
 
 const toggleBtn = ref(true);
 const passwordShow = ref('password');
@@ -44,25 +52,48 @@ const submitLogin = async () => {
   let allOutline = Array.from(
     loginForm.value.getElementsByClassName('outline')
   );
+
+  if (login.password !== '' && login.password.length < 6) {
+    allOutline[1].classList.add('error');
+    valid = false;
+    alertMeg.value = '*密碼格式錯誤';
+  } else {
+    allOutline[1].classList.remove('error');
+  }
   values.forEach((i, index) => {
     if (!i) {
       allOutline[index].classList.add('error');
       valid = false;
       alertMeg.value = '*尚有必填項目為空';
-    } else {
+    } else if (index !== 1) {
       allOutline[index].classList.remove('error');
     }
   });
+
   if (valid) {
+    spinShow.value = true;
     alertText.value = false;
     alertMeg.value = '';
+
     const res = await apiLogin();
-    console.log(res);
+    setTimeout(() => {
+      spinShow.value = false;
+      if (res.code !== 200) {
+        message.error(res.meg);
+      } else {
+        message.success(res.meg);
+        store.loginUser(res.userData);
+        console.log(store);
+        setTimeout(() => {
+          router.push({ name: 'Mine' });
+        }, 1000);
+      }
+    }, 1000);
   } else {
     alertText.value = true;
   }
 };
-const submitSignup = () => {
+const submitSignup = async () => {
   let valid = true;
   let values = Object.values(signup);
   let allOutline = Array.from(
@@ -78,17 +109,30 @@ const submitSignup = () => {
     allOutline[2].classList.add('error');
     valid = false;
     alertMeg.value = '*密碼與確認密碼不同';
+  } else if (signup.password !== '' && signup.password.length < 6) {
+    allOutline[1].classList.add('error');
+    valid = false;
+    alertMeg.value = '*密碼格式錯誤';
   } else {
     allOutline[1].classList.remove('error');
     allOutline[2].classList.remove('error');
   }
+  //確認手機格式
+  if (signup.phone !== '' && signup.phone.length < 10) {
+    allOutline[4].classList.add('error');
+    valid = false;
+    alertMeg.value = '*手機號碼格式錯誤';
+  } else {
+    allOutline[4].classList.remove('error');
+  }
+
   //確認必填
   values.forEach((i, index) => {
     if (!i) {
       allOutline[index].classList.add('error');
       valid = false;
       alertMeg.value = '*尚有必填項目為空';
-    } else if (index !== 1 && index !== 2) {
+    } else if (index !== 1 && index !== 2 && index !== 4) {
       allOutline[index].classList.remove('error');
     }
   });
@@ -96,7 +140,21 @@ const submitSignup = () => {
   if (valid) {
     alertText.value = false;
     alertMeg.value = '';
-    console.log(allOutline);
+    spinShow.value = true;
+
+    const res = await apiSignup();
+    setTimeout(() => {
+      spinShow.value = false;
+      if (res.code !== 200) {
+        message.error(res.meg);
+      } else {
+        message.success(res.meg);
+        login.email = signup.email;
+        login.password = signup.password;
+        toggleType(true);
+      }
+    }, 1000);
+    console.log(res);
   } else {
     alertText.value = true;
   }
@@ -104,7 +162,7 @@ const submitSignup = () => {
 
 // api
 const apiLogin = async () => {
-  const res = await axios.post('/api/login', { data: { login } }).then(
+  return await axios.post('/api/login', { data: { login } }).then(
     res => {
       return res.data;
     },
@@ -112,7 +170,16 @@ const apiLogin = async () => {
       return Promise.reject(err);
     }
   );
-  return res;
+};
+const apiSignup = async () => {
+  return await axios.post('/api/signup', { data: { signup } }).then(
+    res => {
+      return res.data;
+    },
+    err => {
+      return Promise.reject(err);
+    }
+  );
 };
 
 // Reg
@@ -161,98 +228,103 @@ onMounted(() => {});
         註冊
       </button>
     </div>
+    <n-spin :show="spinShow">
+      <section v-if="toggleBtn">
+        <p v-if="alertText" class="alert-text">{{ alertMeg }}</p>
+        <form @submit.prevent ref="loginForm">
+          <div class="outline">
+            <input
+              type="email"
+              placeholder="郵箱(ex@mail.com)"
+              v-model="login.email"
+              @input="inputRegEmail"
+            />
+          </div>
+          <div class="outline">
+            <span><font-awesome-icon :icon="eyeShow" @click="togglePw" /></span>
+            <input
+              :type="passwordShow"
+              placeholder="密碼(6-16位英數字下劃線)"
+              v-model="login.password"
+              @input="inputRegPwd"
+            />
+          </div>
+          <div class="fft">
+            <a @click="router.push({ name: 'Forgot' })">忘記密碼</a>
+            <a @click="toggleBtn = false">加入會員</a>
+          </div>
+          <button class="redBtn" type="submit" @click="submitLogin">
+            登入
+          </button>
+          <n-divider> <p>或</p> </n-divider>
+          <button class="blueBtn" type="button" disabled>Facebook 登入</button>
+        </form>
+      </section>
 
-    <section v-if="toggleBtn">
-      <p v-if="alertText" class="alert-text">{{ alertMeg }}</p>
-      <form @submit.prevent ref="loginForm">
-        <div class="outline">
-          <input
-            type="email"
-            placeholder="信箱"
-            v-model="login.email"
-            @input="inputRegEmail"
-          />
-        </div>
-        <div class="outline">
-          <span><font-awesome-icon :icon="eyeShow" @click="togglePw" /></span>
-          <input
-            :type="passwordShow"
-            placeholder="密碼"
-            v-model="login.password"
-            @input="inputRegPwd"
-          />
-        </div>
-        <div class="fft">
-          <a href="#">忘記密碼</a>
-          <a href="#" @click="toggleBtn = false">加入會員</a>
-        </div>
-        <button class="redBtn" type="submit" @click="submitLogin">登入</button>
-        <n-divider> <p>或</p> </n-divider>
-        <button class="blueBtn" type="button" disabled>Facebook 登入</button>
-      </form>
-    </section>
-
-    <section v-else>
-      <p v-if="alertText" class="alert-text">{{ alertMeg }}</p>
-      <form @submit.prevent ref="signupForm">
-        <div class="outline">
-          <input
-            type="email"
-            placeholder="信箱(ex@mail.com)*"
-            v-model="signup.email"
-            @input.="inputRegEmail"
-          />
-        </div>
-        <div class="outline">
-          <span><font-awesome-icon :icon="eyeShow" @click="togglePw" /></span>
-          <input
-            :type="passwordShow"
-            placeholder="密碼(6-16位英數字下劃線)*"
-            v-model="signup.password"
-            @input="inputRegPwd"
-          />
-        </div>
-        <div class="outline">
-          <span><font-awesome-icon :icon="eyeShow" @click="togglePw" /></span>
-          <input
-            :type="passwordShow"
-            placeholder="確認密碼*"
-            v-model="signup.rePassword"
-            @input="inputRegPwd"
-          />
-        </div>
-        <br />
-        <div class="outline">
-          <input
-            type="text"
-            placeholder="姓名*"
-            v-model="signup.name"
-            @input="inputRegSpace"
-          />
-        </div>
-        <div class="outline">
-          <input
-            type="number"
-            placeholder="手機(8-10位數字)*"
-            v-model.number="signup.phone"
-            @input="inputRegPhone"
-          />
-        </div>
-        <div class="outline">
-          <input
-            type="text"
-            placeholder="地址*"
-            v-model="signup.address"
-            @input="inputRegSpace"
-          />
-        </div>
-        <div class="fft">
-          <a href="#">會員條款</a>
-          <a href="#" @click="toggleBtn = true">已有帳號？登入</a>
-        </div>
-        <button class="redBtn" type="submit" @click="submitSignup">註冊</button>
-      </form>
-    </section>
+      <section v-else>
+        <p v-if="alertText" class="alert-text">{{ alertMeg }}</p>
+        <form @submit.prevent ref="signupForm">
+          <div class="outline">
+            <input
+              type="email"
+              placeholder="郵箱(ex@mail.com)*"
+              v-model="signup.email"
+              @input.="inputRegEmail"
+            />
+          </div>
+          <div class="outline">
+            <span><font-awesome-icon :icon="eyeShow" @click="togglePw" /></span>
+            <input
+              :type="passwordShow"
+              placeholder="密碼(6-16位英數字下劃線)*"
+              v-model="signup.password"
+              @input="inputRegPwd"
+            />
+          </div>
+          <div class="outline">
+            <span><font-awesome-icon :icon="eyeShow" @click="togglePw" /></span>
+            <input
+              :type="passwordShow"
+              placeholder="確認密碼*"
+              v-model="signup.rePassword"
+              @input="inputRegPwd"
+            />
+          </div>
+          <br />
+          <div class="outline">
+            <input
+              type="text"
+              placeholder="姓名*"
+              v-model="signup.name"
+              @input="inputRegSpace"
+            />
+          </div>
+          <div class="outline">
+            <input
+              type="text"
+              placeholder="手機號(10位數字)*"
+              v-model="signup.phone"
+              @input="inputRegPhone"
+            />
+          </div>
+          <div class="outline">
+            <input
+              type="text"
+              placeholder="地址*"
+              v-model="signup.address"
+              @input="inputRegSpace"
+            />
+          </div>
+          <div class="fft">
+            <a href="#">會員條款</a>
+            <a href="#" @click="toggleBtn = true">已有帳號？登入</a>
+          </div>
+          <button class="redBtn" type="submit" @click="submitSignup">
+            註冊
+          </button>
+        </form>
+      </section>
+    </n-spin>
   </main>
 </template>
 
@@ -291,16 +363,12 @@ main {
 
   section {
     margin-top: 0.5rem;
-    width: 70%;
     form {
       width: 100%;
       margin-top: 0.3rem;
       display: flex;
       flex-direction: column;
       align-items: center;
-      .alert {
-        border: 0.03rem solid #7a5e49;
-      }
       .outline {
         display: flex;
         align-items: center;
@@ -364,7 +432,7 @@ main {
         color: #c9bc99;
         border: none;
         border-radius: 0.1rem;
-        width: 100%;
+        width: calc(100vw * 0.7 - 1rem);
         padding: 0.2rem;
         font-size: 0.4rem;
         &:hover,
@@ -378,7 +446,7 @@ main {
         color: #c2d0d5;
         border: none;
         border-radius: 0.1rem;
-        width: 100%;
+        width: calc(100vw * 0.7 - 1rem);
         padding: 0.2rem;
         font-size: 0.4rem;
         &:hover,

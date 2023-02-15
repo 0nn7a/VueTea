@@ -33,6 +33,8 @@ import {
   faFaceSmile,
   faEye,
   faEyeSlash,
+  faPenToSquare,
+  faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import {
   faHeart as farHeart,
@@ -69,7 +71,9 @@ library.add(
   faEnvelopesBulk,
   faFaceSmile,
   faEye,
-  faEyeSlash
+  faEyeSlash,
+  faPenToSquare,
+  faTrash
 );
 
 import App from '@/App.vue';
