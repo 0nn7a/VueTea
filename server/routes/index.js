@@ -267,6 +267,82 @@ router.post('/detail', function (req, res) {
   }
 });
 
+// Token
+const jwt = require('jsonwebtoken');
+const SECRET = 'vueteaproject';
+
+// addCart
+const cartData = [];
+router.post('/addCart', function (req, res) {
+  let { pname } = req.body.data;
+  let { token } = req.headers;
+  let valid = jwt.verify(token, SECRET, (err, payload) => {
+    if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return { code: 401, meg: 'Token 已過期，請重新登入' };
+      } else if (err.name === 'JsonWebTokenError') {
+        return { code: 401, meg: '無效 Token，請重新登入' };
+      }
+    } else {
+      let data = detailData[pname];
+      cartData.push({
+        userEmail: payload.email,
+        name: pname,
+        price: data.price,
+        number: 1,
+        url: data.product[0].url,
+      });
+      return { code: 200, meg: '添加購物車成功' };
+    }
+  });
+  console.log(cartData);
+  res.send(valid);
+});
+router.post('/getCart', function (req, res) {
+  let { token } = req.headers;
+  let valid = jwt.verify(token, SECRET, (err, payload) => {
+    if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return { code: 401, meg: 'Token 已過期，請重新登入', data: [] };
+      } else if (err.name === 'JsonWebTokenError') {
+        return { code: 401, meg: '無效 Token，請重新登入', data: [] };
+      }
+    } else {
+      let data = cartData.filter(c => c.userEmail === payload.email);
+      return { code: 200, data: data || [] };
+    }
+  });
+  res.send(valid);
+});
+router.post('/delCart', function (req, res) {
+  let { token } = req.headers;
+  let { url } = req.body.data;
+  let valid = jwt.verify(token, SECRET, (err, payload) => {
+    if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return { code: 401, meg: 'Token 已過期，請重新登入', data: [] };
+      } else if (err.name === 'JsonWebTokenError') {
+        return { code: 401, meg: '無效 Token，請重新登入', data: [] };
+      }
+    } else {
+      for (let i = 0; i < cartData.length; i++) {
+        url.forEach(u => {
+          if (
+            cartData[i].userEmail === payload.email &&
+            cartData[i].url === u
+          ) {
+            cartData.splice(i, 1);
+          }
+        });
+      }
+      let data = cartData.filter(c => c.userEmail === payload.email);
+      console.log(url, data);
+      return { code: 200, meg: '刪除成功', data: data || [] };
+    }
+  });
+  res.send(valid);
+});
+
 // User
 const userData = [
   {
@@ -287,10 +363,17 @@ router.post('/login', function (req, res) {
   });
   if (exist) {
     if (exist.password === password) {
+      let token = jwt.sign({ email }, SECRET, { expiresIn: 60 * 60 * 2 });
       res.send({
         code: 200,
         meg: '登入成功',
-        userData: exist,
+        userData: {
+          avatar: exist.avatar,
+          name: exist.name,
+          email: exist.email,
+          address: exist.address,
+        },
+        token: token,
       });
     } else {
       res.send({

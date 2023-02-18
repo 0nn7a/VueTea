@@ -1,4 +1,9 @@
 <script setup>
+import { useMessage } from 'naive-ui';
+const message = useMessage();
+import { useDialog } from 'naive-ui';
+const dialog = useDialog();
+
 import { useCommonStore } from '@/stores/commonStore';
 const store = useCommonStore();
 const router = useRouter();
@@ -6,26 +11,16 @@ function imgPdUrl(n) {
   return new URL(`/src/assets/images/product/${n}.png`, import.meta.url).href;
 }
 
-const cartData = reactive({
-  each: [
-    {
-      name: '魔呼精選咖啡（十種口味 四種焙度風味）',
-      price: 750,
-      number: 1,
-      url: 'coffeeTitle',
-    },
-  ],
-});
-
-//check box
-const checkedbox = ref();
-const toggle = event => {
-  console.log(event.target.checked);
+const toggleIcon = ref('fa-solid fa-pen-to-square');
+const editStatus = ref(true);
+const toEdit = () => {
+  toggleIcon.value === 'fa-solid fa-pen-to-square'
+    ? (toggleIcon.value = 'fa-solid fa-circle-xmark')
+    : (toggleIcon.value = 'fa-solid fa-pen-to-square');
+  editStatus.value = !editStatus.value;
 };
 
-//add & reduce num
-
-onMounted(() => {});
+store.getCartData();
 </script>
 
 <template>
@@ -37,15 +32,24 @@ onMounted(() => {});
         @click="router.back()"
       />
       <p>購物車</p>
-      <font-awesome-icon icon="fa-solid fa-pen-to-square" class="icon" />
+      <font-awesome-icon :icon="toggleIcon" class="icon" @click="toEdit" />
     </nav>
   </header>
   <main>
-    <section v-for="(c, index) in store.cartData" :key="c.url">
+    <section
+      v-if="store.cartData.length > 0"
+      v-for="(c, index) in store.cartData"
+      :key="c.url"
+    >
       <div class="check">
         <div class="checkbox-wrapper-18">
           <div class="round">
-            <input type="checkbox" :id="index" />
+            <input
+              type="checkbox"
+              :id="index"
+              :checked="c.checked"
+              @click="store.checkItem(c.url, c)"
+            />
             <label :for="index"></label>
           </div>
         </div>
@@ -54,7 +58,11 @@ onMounted(() => {});
       <div class="plus">
         <div class="inner">
           <h3>{{ c.name }}</h3>
-          <font-awesome-icon icon="fa-solid fa-trash" class="trash" />
+          <font-awesome-icon
+            icon="fa-solid fa-trash"
+            class="trash"
+            @click="store.delItem(message, dialog, c.url)"
+          />
         </div>
         <div class="foot">
           <div class="input-number">
@@ -74,31 +82,58 @@ onMounted(() => {});
         </div>
       </div>
     </section>
+    <div v-else-if="!store.token" class="notFound">
+      <p>您尚未登入，點擊跳轉</p>
+      <button @click="router.push({ name: 'Login' })">登入</button>
+    </div>
+    <div v-else class="notFound">
+      <p>您的購物車空蕩蕩的</p>
+      <p>找不到您想要的商品嗎？</p>
+      <p>試試 <button @click="router.push({ name: 'Skey' })">搜尋</button></p>
+    </div>
   </main>
-  <footer>
+
+  <footer v-if="store.cartData.length > 0">
     <div class="check">
       <div class="checkbox-wrapper-18">
         <div class="round">
           <input
             type="checkbox"
-            id="allcheck"
-            v-model="checkedbox"
-            @click="toggle"
+            id="allCheck"
+            :checked="store.isCheckAll"
+            @click="store.checkAllFn"
           />
-          <label for="allcheck"></label>
+          <label for="allCheck"></label>
         </div>
       </div>
     </div>
-    <div class="total">
+
+    <div v-show="editStatus" class="total">
       <p>
-        <span>{{ store.cartNumbers }}</span> 件商品
+        <span>{{ store.cartTotal.num }}</span> 件商品
       </p>
       <p>
-        總計：<span>$ {{ store.cartDollar }}</span>
+        總計：<span>$ {{ store.cartTotal.price }}</span>
       </p>
     </div>
-    <button type="button">去結算</button>
+
+    <button
+      v-if="editStatus"
+      type="button"
+      :class="store.selectList.length <= 0 ? 'dis' : ''"
+    >
+      去結算
+    </button>
+    <button
+      v-else
+      type="button"
+      :class="store.selectList.length <= 0 ? 'dis' : ''"
+      @click="store.delItem(message, dialog)"
+    >
+      刪除
+    </button>
   </footer>
+  <Tabbar v-else></Tabbar>
 </template>
 
 <style lang="less" scoped>
@@ -260,6 +295,41 @@ footer {
     margin-left: auto;
     &:hover {
       background-color: #672116;
+    }
+  }
+  .dis {
+    background-color: #7a5e49;
+    color: #c9bc99;
+  }
+}
+
+.notFound {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 1.3rem);
+  p {
+    margin-top: 0.25rem;
+    font-size: 0.4rem;
+    color: #958264;
+    letter-spacing: 0.05rem;
+  }
+  button {
+    margin-top: 0.25rem;
+    border: none;
+    background-color: #8e3122;
+    color: #c9bc99;
+    font-size: 0.45rem;
+    border-radius: 0.05rem;
+    padding: 0.2rem 0.5rem;
+    letter-spacing: 0.05rem;
+    transition: all 0.2s ease-in;
+    &:hover,
+    &:active {
+      background-color: #672116;
+      font-size: 0.5rem;
+      cursor: pointer;
     }
   }
 }

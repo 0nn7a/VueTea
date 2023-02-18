@@ -14,6 +14,7 @@ import {
   faUser as fasUser,
   faSquareMinus as fasSquareMinus,
   faCreditCard as fasCreditCard,
+  faCircleXmark as fasCircleXmark,
   faMagnifyingGlass,
   faHeadphonesSimple,
   faCookieBite,
@@ -41,7 +42,7 @@ import {
   faUser as farUser,
   faSquareMinus as farSquareMinus,
   faCreditCard as farCreditCard,
-  faCircleXmark,
+  faCircleXmark as farCircleXmark,
 } from '@fortawesome/free-regular-svg-icons';
 library.add(
   fasHeart,
@@ -52,6 +53,8 @@ library.add(
   farSquareMinus,
   fasCreditCard,
   farCreditCard,
+  fasCircleXmark,
+  farCircleXmark,
   faMagnifyingGlass,
   faHeadphonesSimple,
   faCookieBite,
@@ -59,7 +62,6 @@ library.add(
   faXmark,
   faClockRotateLeft,
   faFire,
-  faCircleXmark,
   faCaretUp,
   faCaretDown,
   faHouse,

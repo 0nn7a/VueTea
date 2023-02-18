@@ -41,14 +41,12 @@ const themeOverrides = {
 };
 
 const route = useRoute();
+
 import { useCommonStore } from '@/stores/commonStore';
 const store = useCommonStore();
+store.initUser();
 
 const tabbarShow = ['Detail', 'Cart'];
-
-onMounted(() => {
-  store.initUser();
-});
 </script>
 
 <template>

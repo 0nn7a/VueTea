@@ -16,58 +16,115 @@ export const useCommonStore = defineStore('common', {
 
       //cart
       cartData: [
-        {
-          name: '魔呼精選咖啡（十種口味 四種焙度風味）',
-          price: 750,
-          number: 1,
-          url: 'coffeeTitle',
-        },
-        {
-          name: '魔呼禮品提袋 幾何藝術 貓貓款',
-          price: 49,
-          number: 1,
-          url: 'bagTitle',
-        },
+        // {
+        //   name: '魔呼精選咖啡（十種口味 四種焙度風味）',
+        //   price: 750,
+        //   number: 1,
+        //   url: 'coffeeTitle',
+        //   checked: true
+        // },
       ],
+      selectList: [],
     };
   },
   getters: {
-    cartNumbers: state => {
-      let sum = 0;
+    //cart
+    cartTotal: state => {
+      let total = {
+        num: 0,
+        price: 0,
+      };
       state.cartData.forEach(c => {
-        sum = sum + c.number;
+        if (c.checked) {
+          total.num += c.number;
+          total.price += c.price * c.number;
+        }
       });
-      return sum;
+      return total;
     },
-    cartDollar: state => {
-      let sum = 0;
-      state.cartData.forEach(c => {
-        sum = sum + c.price * c.number;
-      });
-      return sum;
+    isCheckAll: state => {
+      return state.cartData.length === state.selectList.length;
     },
   },
   actions: {
     //user
-    loginUser(user) {
-      this.userInfo = user;
-      this.token = user.token;
+    loginUser(res) {
+      this.userInfo = res.userData;
+      this.token = res.token;
       this.loginStatus = true;
-      localStorage.setItem('setUser', JSON.stringify(user));
+      localStorage.setItem('setUser', JSON.stringify(this.userInfo));
+      localStorage.setItem('token', this.token);
     },
     logoutUser() {
       this.userInfo = {};
       this.token = null;
       this.loginStatus = false;
       localStorage.removeItem('setUser');
+      localStorage.removeItem('token');
     },
     initUser() {
       let user = JSON.parse(localStorage.getItem('setUser'));
+      let token = localStorage.getItem('token');
       if (user) {
         this.userInfo = user;
-        this.token = user.token;
+        this.token = token;
         this.loginStatus = true;
       }
+    },
+
+    //cart
+    checkAll() {
+      this.selectList = this.cartData.map(c => {
+        c.checked = true;
+        return c.url;
+      });
+    },
+    unCheckAll() {
+      this.cartData.forEach(c => {
+        c.checked = false;
+      });
+      this.selectList = [];
+    },
+    checkAllFn() {
+      this.isCheckAll ? this.unCheckAll() : this.checkAll();
+    },
+    checkItem(url, c) {
+      c.checked = !c.checked;
+      if (this.selectList.indexOf(url) !== -1) {
+        this.selectList = this.selectList.filter(s => s !== url);
+      } else {
+        this.selectList.push(url);
+      }
+    },
+    delItem(message, dialog, url) {
+      if (this.selectList.length <= 0) {
+        message.error('請至少選擇一樣商品');
+        return;
+      }
+      dialog.error({
+        showIcon: false,
+        closable: false,
+        content: '是否刪除所選商品？',
+        positiveText: '是',
+        negativeText: '否',
+        autoFocus: false,
+        onPositiveClick: () => {
+          let arr = [];
+          if (url) {
+            arr.push(url);
+          } else {
+            arr = this.selectList;
+          }
+          this.delCartItem(arr).then(res => {
+            if (res.code === 200) {
+              message.success(res.meg);
+            } else {
+              message.error(res.meg);
+            }
+          });
+          arr = [];
+        },
+      });
     },
 
     //api
@@ -83,6 +140,42 @@ export const useCommonStore = defineStore('common', {
           }
         );
       this.product = res.resultArr;
+    },
+    async getCartData() {
+      const res = await axios
+        .post('/api/getCart', {}, { headers: { token: this.token } })
+        .then(
+          res => {
+            res.data.data.forEach(d => {
+              d['checked'] = true;
+            });
+            return res.data;
+          },
+          err => {
+            return Promise.reject(err);
+          }
+        );
+      this.cartData = res.data;
+      this.checkAll();
+    },
+    async delCartItem(url) {
+      const res = await axios
+        .post(
+          '/api/delCart',
+          { data: { url } },
+          { headers: { token: this.token } }
+        )
+        .then(
+          res => {
+            return res.data;
+          },
+          err => {
+            return Promise.reject(err);
+          }
+        );
+      this.cartData = res.data;
+      this.checkAll();
+      return res;
     },
   },
 });

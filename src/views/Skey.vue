@@ -1,8 +1,9 @@
 <script setup>
 import { useDialog } from 'naive-ui';
+const dialog = useDialog();
+
 import { useCommonStore } from '@/stores/commonStore';
 const store = useCommonStore();
-const dialog = useDialog();
 
 const router = useRouter();
 const record = reactive({

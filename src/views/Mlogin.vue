@@ -82,8 +82,7 @@ const submitLogin = async () => {
         message.error(res.meg);
       } else {
         message.success(res.meg);
-        store.loginUser(res.userData);
-        console.log(store);
+        store.loginUser(res);
         setTimeout(() => {
           router.push({ name: 'Mine' });
         }, 1000);

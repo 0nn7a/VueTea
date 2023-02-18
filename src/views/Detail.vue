@@ -1,5 +1,9 @@
 <script setup>
 import axios from 'axios';
+
+import { useMessage } from 'naive-ui';
+const message = useMessage();
+
 const router = useRouter();
 const route = useRoute();
 const { pname } = route.query;
@@ -17,9 +21,10 @@ const queryDetail = async () => {
     imgData.product = res.detailData.product;
     imgData.flavor = res.detailData.flavor || [];
     imgData.detail = res.detailData.detail;
-    imgData.random = imgUrl(res.detailData.random);
     imgData.para = res.detailData.para;
     imgData.price = res.detailData.price;
+    imgData.random = imgUrl(res.detailData.random);
+
     imgData.product.forEach(item => {
       item.url = imgPdUrl(item.url);
     });
@@ -53,6 +58,31 @@ const navShow = ref(true);
 const styleOpt = reactive({
   ease: {},
 });
+
+// addCart
+const addCart = async () => {
+  let token = localStorage.getItem('token');
+  if (!token) {
+    message.error('請先登入');
+    router.push({ name: 'Login' });
+  } else {
+    let res = await axios
+      .post('/api/addCart', { data: { pname } }, { headers: { token } })
+      .then(
+        res => {
+          return res.data;
+        },
+        err => {
+          return Promise.reject(err);
+        }
+      );
+    if (res.code === 200) {
+      message.success(res.meg);
+    } else {
+      message.error(res.meg);
+    }
+  }
+};
 
 onMounted(() => {
   queryDetail();
@@ -123,7 +153,7 @@ onMounted(() => {
   </main>
 
   <footer>
-    <button class="cart">加入購物車</button>
+    <button class="cart" @click="addCart">加入購物車</button>
     <button class="buy">立即購買</button>
   </footer>
 </template>
