@@ -26,7 +26,7 @@ const content = reactive({
   個人中心: [
     { icon: 'fa-solid fa-user-group', name: '我的拼團' },
     { icon: 'fa-solid fa-star', name: '我的收藏' },
-    { icon: 'fa-solid fa-location-dot', name: '地址管理' },
+    { icon: 'fa-solid fa-location-dot', name: '地址管理', path: 'Aindex' },
   ],
   優惠福利: [{ icon: 'fa-solid fa-ticket-simple', name: '優惠券' }],
   專屬服務: [
@@ -53,7 +53,11 @@ const content = reactive({
       <h5>{{ t }}</h5>
       <n-divider />
       <ul>
-        <li v-for="i in content[t]" :key="i.name">
+        <li
+          v-for="i in content[t]"
+          :key="i.name"
+          @click="router.push({ name: i.path })"
+        >
           <font-awesome-icon :icon="i.icon" />
           {{ i.name }}<font-awesome-icon icon="fa-solid fa-chevron-right" />
         </li>

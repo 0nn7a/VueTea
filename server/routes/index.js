@@ -17,6 +17,7 @@ const recsData = [
     desc: '大人味的迷人苦甜焦糖香',
     tags: '蛋香十足 口感扎實綿密',
     url: 'pudding4',
+    detail: '日式焦糖烤布丁',
   },
   {
     id: 2,
@@ -25,6 +26,7 @@ const recsData = [
     desc: '日本丸久小山園抹茶粉',
     tags: '甘苦不澀 抹茶控',
     url: 'pancakeMoca',
+    detail: '彩虹風味磅蛋糕(綜合)',
   },
   {
     id: 3,
@@ -54,23 +56,78 @@ const likesData = [
 
 // Search Data
 const searchData = [
-  { url: 'basqueOriginal', name: '經典焦香巴斯克', price: 690 },
+  {
+    url: 'basqueOriginal',
+    name: '經典焦香巴斯克',
+    price: 690,
+    detail: '巴斯克蛋糕',
+  },
   { url: 'creamHappy', name: '開心果奶油夾心餅', price: 650 },
   { url: 'creamSweetPotato', name: '烤地瓜奶油夾心餅', price: 710 },
-  { url: 'pancakeApple', name: '蘋果肉桂奶酥磅蛋糕', price: 700 },
+  {
+    url: 'pancakeApple',
+    name: '蘋果肉桂奶酥磅蛋糕',
+    price: 700,
+    detail: '彩虹風味磅蛋糕(綜合)',
+  },
   { url: 'creamBerry', name: '莓果奶油夾心餅', price: 730 },
-  { url: 'basqueCocoa', name: '法芙娜可可巴斯克', price: 750 },
-  { url: 'basqueMoca', name: '小山園抹茶巴斯克', price: 820 },
-  { url: 'pancakeBacon', name: '香蔥培根芝士磅蛋糕', price: 730 },
-  { url: 'pancakeCream', name: '焦糖烤杏仁磅蛋糕', price: 690 },
-  { url: 'basqueLame', name: '蘭姆葡萄巴斯克', price: 720 },
-  { url: 'pancakeCocoa', name: '法芙娜可可乳酪磅蛋糕', price: 750 },
-  { url: 'pancakeTea', name: '伯爵茶麻糬磅蛋糕', price: 850 },
+  {
+    url: 'basqueCocoa',
+    name: '法芙娜可可巴斯克',
+    price: 750,
+    detail: '巴斯克蛋糕',
+  },
+  {
+    url: 'basqueMoca',
+    name: '小山園抹茶巴斯克',
+    price: 820,
+    detail: '巴斯克蛋糕',
+  },
+  {
+    url: 'pancakeBacon',
+    name: '香蔥培根芝士磅蛋糕',
+    price: 730,
+    detail: '彩虹風味磅蛋糕(綜合)',
+  },
+  {
+    url: 'pancakeCream',
+    name: '焦糖烤杏仁磅蛋糕',
+    price: 690,
+    detail: '彩虹風味磅蛋糕(綜合)',
+  },
+  {
+    url: 'basqueLame',
+    name: '蘭姆葡萄巴斯克',
+    price: 720,
+    detail: '巴斯克蛋糕',
+  },
+  {
+    url: 'pancakeCocoa',
+    name: '法芙娜可可乳酪磅蛋糕',
+    price: 750,
+    detail: '彩虹風味磅蛋糕(綜合)',
+  },
+  {
+    url: 'pancakeTea',
+    name: '伯爵茶麻糬磅蛋糕',
+    price: 850,
+    detail: '彩虹風味磅蛋糕(綜合)',
+  },
   { url: 'creamCocoa', name: '榛果法芙娜可可奶油夾心餅', price: 690 },
   { url: 'creamBake', name: '焙茶奶油夾心餅', price: 680 },
   { url: 'creamBlack', name: '蜂蜜奶油竹炭夾心餅', price: 650 },
-  { url: 'pancakeLemon', name: '青檸糖霜磅蛋糕', price: 760 },
-  { url: 'pancakeMoca', name: '小山園抹茶酥頂磅蛋糕', price: 820 },
+  {
+    url: 'pancakeLemon',
+    name: '青檸糖霜磅蛋糕',
+    price: 760,
+    detail: '彩虹風味磅蛋糕(綜合)',
+  },
+  {
+    url: 'pancakeMoca',
+    name: '小山園抹茶酥頂磅蛋糕',
+    price: 820,
+    detail: '彩虹風味磅蛋糕(綜合)',
+  },
   { url: 'creamLame', name: '蘭姆葡萄奶油夾心餅', price: 690 },
   { url: 'creamSalt', name: '鹽之花焦糖奶油夾心餅', price: 720 },
 ];
@@ -271,33 +328,8 @@ router.post('/detail', function (req, res) {
 const jwt = require('jsonwebtoken');
 const SECRET = 'vueteaproject';
 
-// addCart
+// Cart
 const cartData = [];
-router.post('/addCart', function (req, res) {
-  let { pname } = req.body.data;
-  let { token } = req.headers;
-  let valid = jwt.verify(token, SECRET, (err, payload) => {
-    if (err) {
-      if (err.name === 'TokenExpiredError') {
-        return { code: 401, meg: 'Token 已過期，請重新登入' };
-      } else if (err.name === 'JsonWebTokenError') {
-        return { code: 401, meg: '無效 Token，請重新登入' };
-      }
-    } else {
-      let data = detailData[pname];
-      cartData.push({
-        userEmail: payload.email,
-        name: pname,
-        price: data.price,
-        number: 1,
-        url: data.product[0].url,
-      });
-      return { code: 200, meg: '添加購物車成功' };
-    }
-  });
-  console.log(cartData);
-  res.send(valid);
-});
 router.post('/getCart', function (req, res) {
   let { token } = req.headers;
   let valid = jwt.verify(token, SECRET, (err, payload) => {
@@ -310,6 +342,66 @@ router.post('/getCart', function (req, res) {
     } else {
       let data = cartData.filter(c => c.userEmail === payload.email);
       return { code: 200, data: data || [] };
+    }
+  });
+  res.send(valid);
+});
+router.post('/addCart', function (req, res) {
+  let { pname } = req.body.data;
+  let { token } = req.headers;
+  let valid = jwt.verify(token, SECRET, (err, payload) => {
+    if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return { code: 401, meg: 'Token 已過期，請重新登入' };
+      } else if (err.name === 'JsonWebTokenError') {
+        return { code: 401, meg: '無效 Token，請重新登入' };
+      }
+    } else {
+      if (!pname) return { code: 404, meg: '找不到此商品' };
+
+      for (let i = 0; i < cartData.length; i++) {
+        if (
+          cartData[i].userEmail === payload.email &&
+          cartData[i].name === pname
+        ) {
+          cartData[i].number++;
+          return { code: 200, meg: '添加購物車成功' };
+        }
+      }
+
+      let data = detailData[pname];
+      cartData.push({
+        userEmail: payload.email,
+        name: pname,
+        price: data.price,
+        number: 1,
+        url: data.product[0].url,
+      });
+      return { code: 200, meg: '添加購物車成功' };
+    }
+  });
+  res.send(valid);
+});
+router.post('/upCart', function (req, res) {
+  let { token } = req.headers;
+  let { url, num } = req.body.data;
+  let valid = jwt.verify(token, SECRET, (err, payload) => {
+    if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return { code: 401, meg: 'Token 已過期，請重新登入' };
+      } else if (err.name === 'JsonWebTokenError') {
+        return { code: 401, meg: '無效 Token，請重新登入' };
+      }
+    } else {
+      for (let i = 0; i < cartData.length; i++) {
+        if (
+          cartData[i].userEmail === payload.email &&
+          cartData[i].url === url
+        ) {
+          cartData[i].number = num;
+          return { code: 200, meg: '更新成功' };
+        }
+      }
     }
   });
   res.send(valid);
@@ -336,7 +428,6 @@ router.post('/delCart', function (req, res) {
         });
       }
       let data = cartData.filter(c => c.userEmail === payload.email);
-      console.log(url, data);
       return { code: 200, meg: '刪除成功', data: data || [] };
     }
   });
@@ -347,11 +438,26 @@ router.post('/delCart', function (req, res) {
 const userData = [
   {
     id: 0,
-    email: 'admin@mail.com',
+    email: 'office@mail.com',
     password: '000000',
-    name: 'Admin',
-    phone: '0900111111',
-    address: 'newTaipei',
+    name: 'Office',
+    phone: '0222982958',
+    address: [
+      {
+        id: 0,
+        name: 'Office',
+        phone: '0222982958',
+        site: '新北市五股區五工三路118號',
+        isDefault: true,
+      },
+      {
+        id: 1,
+        name: 'Home',
+        phone: '0900000000',
+        site: '新北市蘆洲區民族路',
+        isDefault: false,
+      },
+    ],
     avatar: 'avatar0',
   },
 ];
@@ -367,12 +473,7 @@ router.post('/login', function (req, res) {
       res.send({
         code: 200,
         meg: '登入成功',
-        userData: {
-          avatar: exist.avatar,
-          name: exist.name,
-          email: exist.email,
-          address: exist.address,
-        },
+        userData: exist,
         token: token,
       });
     } else {
@@ -402,7 +503,15 @@ router.post('/signup', function (req, res) {
       password,
       name,
       phone,
-      address,
+      address: [
+        {
+          id: 0,
+          name,
+          phone,
+          site: address,
+          isDefault: true,
+        },
+      ],
       avatar: 'avatar1',
     });
     res.send({
@@ -415,7 +524,6 @@ router.post('/signup', function (req, res) {
       meg: '此郵箱已註冊',
     });
   }
-  console.log(userData);
 });
 router.post('/forgot', function (req, res) {
   let { email, password } = req.body.data.forgot;
@@ -441,7 +549,67 @@ router.post('/forgot', function (req, res) {
       meg: '新密碼已重設，跳轉登入',
     });
   }
-  console.log(userData);
+});
+
+// Address
+router.post('/saveSite', function (req, res) {
+  let { token } = req.headers;
+  let { newSite } = req.body.data;
+  let valid = jwt.verify(token, SECRET, (err, payload) => {
+    if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return { code: 401, meg: 'Token 已過期，請重新登入' };
+      } else if (err.name === 'JsonWebTokenError') {
+        return { code: 401, meg: '無效 Token，請重新登入' };
+      }
+    } else {
+      for (let u = 0; u < userData.length; u++) {
+        if (userData[u].email === payload.email) {
+          if (newSite.isDefault) {
+            userData[u].address.forEach(a => {
+              a.isDefault = false;
+            });
+          }
+          for (let i = 0; i < userData[u].address.length; i++) {
+            if (userData[u].address[i].id === newSite.id) {
+              userData[u].address[i] = newSite;
+              return { code: 200, meg: '修改地址成功', userData: userData[u] };
+            }
+          }
+          newSite.id = userData[u].address.length;
+          userData[u].address.push(newSite);
+          return { code: 200, meg: '新增地址成功', userData: userData[u] };
+        }
+      }
+    }
+  });
+  res.send(valid);
+});
+router.post('/delSite', function (req, res) {
+  let { token } = req.headers;
+  let { id } = req.body.data;
+  let valid = jwt.verify(token, SECRET, (err, payload) => {
+    if (err) {
+      if (err.name === 'TokenExpiredError') {
+        return { code: 401, meg: 'Token 已過期，請重新登入' };
+      } else if (err.name === 'JsonWebTokenError') {
+        return { code: 401, meg: '無效 Token，請重新登入' };
+      }
+    } else {
+      userData.forEach(u => {
+        if (u.email === payload.email) {
+          u.address.forEach((a, index) => {
+            if (a.id === id) u.address.splice(index, 1);
+          });
+        }
+      });
+      let exist = userData.find(i => {
+        return i.email === payload.email;
+      });
+      return { code: 200, meg: '刪除成功', userData: exist };
+    }
+  });
+  res.send(valid);
 });
 
 module.exports = router;

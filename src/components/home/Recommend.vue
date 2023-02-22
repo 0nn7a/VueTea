@@ -1,4 +1,5 @@
 <script setup>
+const router = useRouter();
 const props = defineProps({
   recs: Array,
 });
@@ -24,7 +25,10 @@ function imgUrl(n) {
         :bordered="false"
         :content-style="cardStyle"
       >
-        <div class="noti">
+        <div
+          class="noti"
+          @click="router.push({ name: 'Detail', query: { pname: p.detail } })"
+        >
           <span class="badge">{{ p.price }}</span>
           <img :src="imgUrl(p.url)" />
         </div>

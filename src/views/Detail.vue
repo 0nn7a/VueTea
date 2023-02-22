@@ -4,6 +4,9 @@ import axios from 'axios';
 import { useMessage } from 'naive-ui';
 const message = useMessage();
 
+import { useCommonStore } from '@/stores/commonStore';
+const store = useCommonStore();
+
 const router = useRouter();
 const route = useRoute();
 const { pname } = route.query;
@@ -80,6 +83,10 @@ const addCart = async () => {
       message.success(res.meg);
     } else {
       message.error(res.meg);
+      if (res.code !== 404) {
+        store.logoutUser();
+        router.push({ name: 'Login' });
+      }
     }
   }
 };

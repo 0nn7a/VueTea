@@ -116,11 +116,11 @@ const submitSignup = async () => {
     allOutline[1].classList.remove('error');
     allOutline[2].classList.remove('error');
   }
-  //確認手機格式
+  //確認聯絡電話格式
   if (signup.phone !== '' && signup.phone.length < 10) {
     allOutline[4].classList.add('error');
     valid = false;
-    alertMeg.value = '*手機號碼格式錯誤';
+    alertMeg.value = '*聯絡電話格式錯誤';
   } else {
     allOutline[4].classList.remove('error');
   }
@@ -153,7 +153,6 @@ const submitSignup = async () => {
         toggleType(true);
       }
     }, 1000);
-    console.log(res);
   } else {
     alertText.value = true;
   }
@@ -204,8 +203,6 @@ const inputRegPhone = event => {
   event.target.value = event.target.value.replace(/[^0-9]/g, '');
   limitLentgh(event, 10);
 };
-
-onMounted(() => {});
 </script>
 
 <template>
@@ -268,7 +265,7 @@ onMounted(() => {});
               type="email"
               placeholder="郵箱(ex@mail.com)*"
               v-model="signup.email"
-              @input.="inputRegEmail"
+              @input="inputRegEmail"
             />
           </div>
           <div class="outline">
@@ -301,7 +298,7 @@ onMounted(() => {});
           <div class="outline">
             <input
               type="text"
-              placeholder="手機號(10位數字)*"
+              placeholder="聯絡電話(10位數字)*"
               v-model="signup.phone"
               @input="inputRegPhone"
             />
@@ -357,6 +354,9 @@ main {
     .active {
       background-color: #8e3122;
       color: #c9bc99;
+    }
+    button:hover {
+      cursor: pointer;
     }
   }
 
@@ -422,6 +422,7 @@ main {
           &:hover,
           &:active {
             color: #7a5e49;
+            cursor: pointer;
           }
         }
       }

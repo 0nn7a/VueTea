@@ -72,7 +72,32 @@ export const useCommonStore = defineStore('common', {
       }
     },
 
-    //cart
+    //cart-add & reduce numbers
+    async updateNum(product, act, message, dialog) {
+      let p = this.cartData.find(c => c.url === product.url);
+      act === 'add' ? p.number++ : p.number <= 0 ? (p.number = 0) : p.number--;
+      if (p.number === 0) {
+        await this.delItem(message, dialog, product.url);
+        return { code: 200, meg: '刪除成功' };
+      } else {
+        return await axios
+          .post(
+            '/api/upCart',
+            { data: { url: p.url, num: p.number } },
+            { headers: { token: this.token } }
+          )
+          .then(
+            res => {
+              return res.data;
+            },
+            err => {
+              return Promise.reject(err);
+            }
+          );
+      }
+    },
+
+    //cart-check & delete
     checkAll() {
       this.selectList = this.cartData.map(c => {
         c.checked = true;
@@ -97,7 +122,7 @@ export const useCommonStore = defineStore('common', {
       }
     },
     delItem(message, dialog, url) {
-      if (this.selectList.length <= 0) {
+      if (!url && this.selectList.length <= 0) {
         message.error('請至少選擇一樣商品');
         return;
       }
@@ -108,14 +133,14 @@ export const useCommonStore = defineStore('common', {
         positiveText: '是',
         negativeText: '否',
         autoFocus: false,
-        onPositiveClick: () => {
+        onPositiveClick: async () => {
           let arr = [];
           if (url) {
             arr.push(url);
           } else {
             arr = this.selectList;
           }
-          this.delCartItem(arr).then(res => {
+          await this.delCartItem(arr).then(res => {
             if (res.code === 200) {
               message.success(res.meg);
             } else {
@@ -123,6 +148,16 @@ export const useCommonStore = defineStore('common', {
             }
           });
           arr = [];
+        },
+        onNegativeClick: () => {
+          if (url) {
+            this.cartData.forEach(c => {
+              if (c.url === url && c.number === 0) {
+                c.number = 1;
+                console.log(this.cartData);
+              }
+            });
+          }
         },
       });
     },

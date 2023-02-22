@@ -11,6 +11,7 @@ function imgPdUrl(n) {
   return new URL(`/src/assets/images/product/${n}.png`, import.meta.url).href;
 }
 
+//edit
 const toggleIcon = ref('fa-solid fa-pen-to-square');
 const editStatus = ref(true);
 const toEdit = () => {
@@ -20,6 +21,17 @@ const toEdit = () => {
   editStatus.value = !editStatus.value;
 };
 
+//add & reduce num
+const addReduce = async (product, act) => {
+  let res = await store.updateNum(product, act, message, dialog);
+  if (res.code !== 200) {
+    message.error(res.meg);
+    store.logoutUser();
+    router.push({ name: 'Login' });
+  }
+};
+
+// init get
 store.getCartData();
 </script>
 
@@ -29,7 +41,7 @@ store.getCartData();
       <font-awesome-icon
         icon="fa-solid fa-reply"
         class="icon"
-        @click="router.back()"
+        @click="router.push({ name: 'Home' })"
       />
       <p>購物車</p>
       <font-awesome-icon :icon="toggleIcon" class="icon" @click="toEdit" />
@@ -66,17 +78,13 @@ store.getCartData();
         </div>
         <div class="foot">
           <div class="input-number">
-            <span
-              class="add"
-              @click="c.number <= 0 ? (c.number = 0) : c.number--"
-              >-</span
-            >
+            <span class="add" @click="addReduce(c, 'reduce')">-</span>
             <input
               type="number"
               v-model="c.number"
               @input="c.number = Number(String(c.number).replace(/-/g, ''))"
             />
-            <span class="add" @click="c.number++">+</span>
+            <span class="add" @click="addReduce(c, 'add')">+</span>
           </div>
           <p>$ {{ c.price }}</p>
         </div>

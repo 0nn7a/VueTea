@@ -1,6 +1,15 @@
 <script setup>
 const router = useRouter();
 const props = defineProps(['styleOpt', 'navShow', 'background', 'title']);
+const back = () => {
+  if (props.title === '編輯地址' || props.title === '新增地址') {
+    router.push({ name: 'Aindex' });
+  } else if (props.title === '我的地址') {
+    router.push({ name: 'Mine' });
+  } else {
+    router.back();
+  }
+};
 </script>
 
 <template>
@@ -9,7 +18,7 @@ const props = defineProps(['styleOpt', 'navShow', 'background', 'title']);
       <font-awesome-icon
         icon="fa-solid fa-reply"
         class="icon"
-        @click="router.back()"
+        @click="back()"
       />
       <p>{{ title }}</p>
       <font-awesome-icon

@@ -84,6 +84,7 @@ import router from '@/router/index.js';
 const pinia = createPinia();
 const app = createApp(App);
 app.component('font-awesome-icon', FontAwesomeIcon);
-app.use(router);
 app.use(pinia);
+app.use(router);
+
 router.isReady().then(() => app.mount('#app'));

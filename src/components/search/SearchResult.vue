@@ -2,6 +2,8 @@
 import { useCommonStore } from '@/stores/commonStore';
 const store = useCommonStore();
 
+const router = useRouter();
+
 function imgUrl(n) {
   return new URL(`/src/assets/images/product/${n}.png`, import.meta.url).href;
 }
@@ -17,7 +19,12 @@ function imgUrl(n) {
         <h3>{{ p.name }}</h3>
         <div class="other">
           <p>{{ '$' + p.price }}</p>
-          <button type="button">立刻購買</button>
+          <button
+            type="button"
+            @click="router.push({ name: 'Detail', query: { pname: p.detail } })"
+          >
+            立刻購買
+          </button>
         </div>
       </div>
     </n-gi>
